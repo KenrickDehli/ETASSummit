@@ -14,8 +14,8 @@
 
 """A sample Velocitas vehicle app for adjusting seat position."""
 
-import logging
 import json
+import logging
 
 from vehicle import Vehicle  # type: ignore
 from velocitas_sdk.util.log import (  # type: ignore
@@ -56,13 +56,17 @@ class SeatAdjusterApp(VehicleApp):
         """Run when the vehicle app starts"""
         # TODO subscribe to Vehicle.Cabin.Seat.Row1.Pos1.Position and provide
         # on_seat_position_changed as callback.
-        await self.Vehicle.Cabin.Seat.Row1.Pos1.Position.subscribe(self.on_seat_position_changed)   
+        await self.Vehicle.Cabin.Seat.Row1.Pos1.Position.subscribe(
+            self.on_seat_position_changed
+        )
 
     async def on_seat_position_changed(self, data: DataPointReply):
         # TODO publish the current position as MQTT message to CURRENT_POSITION_TOPIC.
         # self.on_set_position_request_received(CURRENT_POSITION_TOPIC)
         position = str(data.get(self.Vehicle.Cabin.Seat.Row1.Pos1.Position).value)
-        await self.publish_mqtt_event(CURRENT_POSITION_TOPIC, json.dumps({"position": position}))
+        await self.publish_mqtt_event(
+            CURRENT_POSITION_TOPIC, json.dumps({"position": position})
+        )
 
     @subscribe_topic(SET_POSITION_REQUEST_TOPIC)
     async def on_set_position_request_received(self, data_str: str) -> None:
